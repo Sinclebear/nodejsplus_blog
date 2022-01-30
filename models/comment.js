@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const CommentSchema = mongoose.Schema(
     {
-        blogId: String,
+        articleId: String,
         authorId: String,
         commentContent: String,
     },

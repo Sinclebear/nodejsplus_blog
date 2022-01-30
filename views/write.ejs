@@ -1,0 +1,240 @@
+<!-- views/write.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title><% if(!article) { %>
+        새 글 작성
+    <% } else { %>
+        글 수정하기
+    <% } %></title>
+    <!-- AJAX 통신을 위한 jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Bulma CSS 링크 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+
+    <!-- 커스텀 폰트 -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard-dynamic-subset.css" />
+
+    <!-- font-awesome 링크  -->
+    <script src="https://kit.fontawesome.com/23b05056a7.js" crossorigin="anonymous"></script>
+
+    <style>
+        * {
+            font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+        }
+    </style>
+    <script>
+
+        function writeArticle(){
+            let authorName = $('#authorName').val();
+            let articlePassword = $('#articlePassword').val();
+            let title = $('#title').val();
+            let content = $('#content').val();
+    
+                if (authorName == '') {
+                    $('#authorName').focus()
+                    alert('작성자명을 입력하여 주세요.');
+                    return;
+                } else if (articlePassword == '') {
+                    $('#articlePassword').focus()
+                    alert('글 비밀번호를 입력하여 주세요.');
+                    return;
+                } else if (title == '') {
+                    $('#title').focus()
+                    alert('글 제목을 입력하여 주세요.');
+                    return;
+                } else if (content == '') {
+                    $('#content').focus()
+                    alert("글 내용을 입력하여 주세요.");
+                    return;
+                } else {
+                    $.ajax({
+                    type: "POST",
+                    url: "/articles/write",
+                    data: {
+                        authorName: authorName,
+                        articlePassword: articlePassword,
+                        title: title,
+                        content: content
+                    },
+                    success: function (response) {
+                        alert(response["msg"])
+                        window.location.href = '/articles'
+                    }
+                    });
+                }
+            }
+
+        function modifyArticle(){
+            let authorName = $('#authorName').val();
+            let articlePassword = $('#articlePassword').val();
+            let title = $('#title').val();
+            let content = $('#content').val();
+            let articleId = $('#articleId').val();
+    
+                if (authorName == '') {
+                    $('#authorName').focus()
+                    alert('작성자명을 입력하여 주세요.');
+                    return;
+                } else if (articlePassword == '') {
+                    $('#articlePassword').focus()
+                    alert('글 비밀번호를 입력하여 주세요.');
+                    return;
+                } else if (title == '') {
+                    $('#title').focus()
+                    alert('글 제목을 입력하여 주세요.');
+                    return;
+                } else if (content == '') {
+                    $('#content').focus()
+                    alert("글 내용을 입력하여 주세요.");
+                    return;
+                } else {
+                    $.ajax({
+                    type: "PATCH",
+                    url: "/articles/" + articleId + "/modify",
+                    data: {
+                        authorName: authorName,
+                        articlePassword: articlePassword,
+                        title: title,
+                        content: content,
+                        articleId: articleId
+                    },
+                    error: function (request, xhr, status) {
+                        alert(JSON.parse(request.responseText)["msg"]);
+                    },
+                    success: function (response) {
+                        alert(response["msg"]);
+                        window.location.href = '/articles';
+                    }
+                    });
+                }
+            }
+
+            function deleteArticle(){
+                let articlePassword = $('#articlePassword').val();
+                let articleId = $('#articleId').val();
+                if(confirm("정말로 삭제하시겠습니까?")){
+                    if (articlePassword == '') {
+                        $('#articlePassword').focus()
+                        alert('글 비밀번호를 입력하여 주세요.');
+                        return;
+                    }
+                    $.ajax({
+                    type: "DELETE",
+                    url: "/articles/" + articleId + "/modify",
+                    data: {
+                        articlePassword: articlePassword,
+                        articleId: articleId
+                    },
+                    error: function (request, xhr, status) {
+                        alert(JSON.parse(request.responseText)["msg"]);
+                    },
+                    success: function (response) {
+                        alert(response["msg"])
+                        window.location.href = '/articles'
+                    }
+                    });
+                } else {
+                    return false;
+                }
+            }
+    </script>
+</head>
+
+
+<body>
+    <section class="hero is-info is-small">
+        <div class="hero-body">
+          <p class="title" style="text-align: center;">
+            <% if(!article) { %>
+                새 글 작성
+            <% } else { %>
+                글 수정하기
+            <% } %>
+          </p>
+          <p class="subtitle" style="text-align: center;">
+            <% if(!article) { %>
+                남기고 싶은 내용을 적어보세요.
+            <% } else {%>
+                작성한 내용을 수정하거나 삭제해보세요.
+            <% } %>
+          </p>
+        </div>
+      </section>
+    <section class="hero is-halfheight">
+		<div class="hero-body">
+            <div class="container has-text-centered">
+                
+				<div class="columns is-8 is-variable ">
+					<div class="column has-text-left">
+						<div class="field">
+							<label class="label">작성자명</label>
+							<div class="control">
+                                <% if(Object.keys(article).length > 0) { %>
+								    <input class="input is-medium" id="authorName" type="text" placeholder="작성자명을 입력하세요." value="<%=article.authorName %>">
+                                <% } else { %>
+                                    <input class="input is-medium" id="authorName" type="text" placeholder="작성자명을 입력하세요.">
+                                <% } %>
+							</div>
+						</div>
+                        <div class="field">
+							<label class="label">비밀번호</label>
+							<div class="control">
+								<input class="input is-medium" id="articlePassword" type="password" placeholder="글 비밀번호를 입력하세요.">
+							</div>
+						</div>
+                        <div class="field">
+							<label class="label">제목</label>
+							<div class="control">
+								<% if(Object.keys(article).length > 0) { %>
+                                <input class="input is-medium" id="title" type="text" placeholder="글 제목을 입력하세요." value="<%=article.title %>">
+                                <% } else { %>
+                                <input class="input is-medium" id="title" type="text" placeholder="글 제목을 입력하세요.">
+                                <% } %>
+                            </div>
+						</div>
+						<div class="field">
+							<label class="label">내용</label>
+							<div class="control">
+								<% if(Object.keys(article).length > 0) { %>
+                                <textarea class="textarea is-medium" id="content" placeholder="여기에 말하고 싶은 이야기를 작성해보세요!"><%=article.content %>
+                                </textarea>
+                                <% } else { %>
+                                <textarea class="textarea is-medium" id="content" placeholder="여기에 말하고 싶은 이야기를 작성해보세요!"></textarea>
+                                <% } %>
+							</div>
+						</div>
+                        <input type="hidden" id="articleId" type="number" value="<%=article.articleId%>">
+						<div class="control">
+                            <% if(!article) { %>
+							    <button type="submit" class="button is-link is-fullwidth has-text-weight-medium is-medium" onclick="writeArticle();">
+                                    <span class="icon is-small"><i class="fas fa-pen"></i></span>
+                                    <span>글쓰기</span>
+                                </button>
+                            <% } else { %>
+                                <div class="buttons is-centered">
+                                    <button type="submit" class="button is-primary is-medium" onclick="modifyArticle();">
+                                        <span class="icon is-small"><i class="fas fa-edit"></i></span>
+                                        <span>수정완료</span>
+                                    </button>
+                                    <button type="submit" class="button is-danger is-medium" onclick="deleteArticle();">
+                                        <span class="icon is-small"><i class="fas fa-trash"></i></span>
+                                        <span>삭제하기</span>
+                                    </button>
+                                </div>
+                            <% } %>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+</body>
+
+</html>

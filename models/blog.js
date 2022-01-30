@@ -10,7 +10,7 @@ const BlogSchema = mongoose.Schema(
     { timestamps: true }
 );
 
-BlogSchema.virtual("blogId").get(function () {
+BlogSchema.virtual("articleId").get(function () {
     return this._id.toHexString();
 });
 BlogSchema.set("toJSON", {

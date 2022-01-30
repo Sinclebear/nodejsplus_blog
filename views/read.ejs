@@ -1,0 +1,79 @@
+<!-- views/read.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title><%=article.title%></title>
+
+    <!-- AJAX 통신을 위한 jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Bulma CSS 링크 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+
+    <!-- 커스텀 폰트 -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard-dynamic-subset.css" />
+
+    <!-- font-awesome 링크  -->
+    <script src="https://kit.fontawesome.com/23b05056a7.js" crossorigin="anonymous"></script>
+
+    <style>
+        * {
+            font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+        }
+    </style>
+    <script>
+        
+    </script>
+</head>
+
+
+<body>
+    <section class="hero is-info is-small">
+        <div class="hero-body">
+          <p class="title" style="text-align: center;">
+            나의 항해99 미니 블로그 - <%=article.articleId %>
+          </p>
+
+        </div>
+      </section>
+      <div class="container">
+        <!-- START ARTICLE FEED -->
+        <section class="articles">
+            <div class="column is-8 is-offset-2">
+                <div class="block" id="myblock">
+                    <div class="buttons is-right">
+                        <a class="button is-primary" onclick="location.href='<%=article.articleId%>/modify'">
+                            <span class="icon is-small"><i class="fas fa-edit"></i></span>
+                            <span>수정하기</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- START ARTICLE -->
+                <div class="card article">
+                    <div class="card-content">
+                        <div class="media">
+                            <div class="media-content has-text-centered">
+                                <p class="title article-title"><%=article.title%></p>
+                                <div class="tags has-addons level-item">
+                                    <span class="tag is-rounded is-info">by <%=article.authorName%></span>
+                                    <span class="tag is-rounded"><%=(article.createdAt).toLocaleDateString('ko-KR')%></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content article-body">
+                            <p><%=article.content%></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- END ARTICLE -->   
+			</div>
+		</div>
+	</section>
+
+</body>
+
+</html>
