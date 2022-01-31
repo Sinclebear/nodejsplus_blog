@@ -6,7 +6,7 @@ const Article = require("./models/blog");
 const Comment = require("./models/comment");
 const res = require("express/lib/response");
 // const authMiddleware = require("./middlewares/auth-middleware");
-// const Joi = require('joi');
+const Joi = require('joi');
 const port = 8080;
 
 // mongoose.connect("mongodb://localhost/nodejsblog_database", {
@@ -57,14 +57,73 @@ router.get("/articles", async (req, res) => {
     // res.send({ articles });
 });
 
-// router.get("/articles/:articleId", async (req, res) => {
-//   console.log("들어왔니?");
-// 	const { articleId } = req.params; // localhost:3000/api/articles/1, 2, ... <- 여기서 req.params는 { articleId : '1' }, articleId = 1
-//   const article = await Article.findById(articleId).exec();
-//   console.log(article);
-// 	// const [article] = await Articles.find({ articleId: Number(articleId) });
-// 	res.send({ article: article } ); // read.ejs 의 내용 render, articleId 값이 일치하는 article 내용 전달
-// });
+
+/**
+ * 회원가입 API. 
+ * 특정 pattern을 미리 정규표현식으로 정의하여, 변수로 선언해둔다.
+ * postUserSchema 는 authorName, password, confirmPassword에 대해 Joi 라이브러리를 통해 조건을 명시함.
+ */
+
+const nickname_pattern = /[a-zA-Z0-9]/ // 닉네임은 알파벳 대소문자 (a~z, A~Z), 숫자(0~9)로 구성하기. flag는 미사용.
+const postUserSchema = Joi.object({
+    // email: Joi.string().pattern(new RegExp(email_pattern)).required(),
+    authorName: Joi.string().min(3).pattern(new RegExp(nickname_pattern)).required(),
+    password: Joi.string().min(4).required(),
+    confirmPassword: Joi.string().required(),
+});
+router.post("/users", async (req, res) => {
+    try {
+        // const { nickname, email, password, confirmPassword } = req.body;
+        const { authorName, password, confirmPassword } = await postUserSchema.validateAsync(req.body);
+
+        if (password.includes(authorName)){
+            res.status(400).send({
+                errorMessage: '비밀번호에 사용자의 아이디는 포함할 수 없습니다.'
+            });
+            return;
+        }
+
+        if (password !== confirmPassword) { // 비밀번호, 비밀번호 확인 일치 여부 확인
+            res.status(400).send({
+                errorMessage: '비밀번호와 비밀번호 확인의 내용이 일치하지 않습니다.',
+            });
+            return; // 이 코드 이하의 코드를 실행하지 않고 탈출
+        }
+
+        const existUsers = await User.find({
+            $or: [{ authorName }],
+        });
+        if (existUsers.length) { // authorName 중복 데이터가 존재 할 경우
+            res.status(400).send({
+                errorMessage: '중복된 닉네임입니다.'
+            });
+            return;
+        }
+
+        const user = new User({ authorName, password });
+        await user.save();
+      
+        res.status(201).send({});
+    } catch (err) {
+        let validationErrorMessage = '요청한 데이터 형식이 올바르지 않습니다.';
+        let validationJoiMessage = err.details[0].message;
+        // if (validationJoiMessage.includes('email')) { // 올바른 이메일 형식을 입력하지 않은 경우
+        //     validationErrorMessage = '올바른 이메일 형식을 입력해주세요.';
+        if (validationJoiMessage.includes('nickname')) {
+            if (validationJoiMessage.includes('at least 3')){ // 아이디가 3글자 미만인 경우
+                validationErrorMessage = '아이디는 3글자 이상이어야 합니다.'
+            } else if(validationJoiMessage.includes('fails to match the required pattern')){ // 올바른 아이디 규칙에 맞지 않는 경우
+                validationErrorMessage = '아이디는 알파벳 대소문자, 숫자만 사용할 수 있습니다.'
+            }
+        } else if (validationJoiMessage.includes('password')) { // 비밀번호가 4글자 미만인 경우
+            validationErrorMessage = '비밀번호는 4글자 이상이어야 합니다.'
+        }
+        console.log(err.details[0].message);
+        res.status(400).send({
+            errorMessage: validationErrorMessage
+        });
+    }
+});
 
 const requestMiddleware = (req, res, next) => {
     console.log("Request URL: ", req.originalUrl, " - ", new Date());
@@ -81,6 +140,11 @@ app.use(express.static(__dirname + '/public'));
 app.get("/", async (req, res) => {
   console.log("메인으로 접근함");
   res.status(200).render('index');  
+});
+
+app.get("/signup", async (req, res) => {
+  console.log("회원가입 페이지로 접근함");
+  res.status(200).render('signup');  
 });
 
 app.get("/articles/write", async (req, res) => {
