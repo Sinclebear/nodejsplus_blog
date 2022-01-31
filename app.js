@@ -23,6 +23,9 @@ const router = express.Router();
 // router.get("/articles", authMiddleware, async (req, res) => {
 router.get("/articles", async (req, res) => {
     const articles = await Article.find().sort({createdAt: 'desc'}).exec();
+    console.log(articles); // [{ }, { }, { }]
+    console.log('-------------------');
+    console.log(articles[0].articleId);
 
     const authorIds = articles.map((author) => author.authorId); //  authorId만 추출
 
@@ -39,9 +42,9 @@ router.get("/articles", async (req, res) => {
         {}
       )
     );
-    console.log(typeof(articles), articles);
-    console.log(typeof(authorIds), authorIds);
-    console.log(typeof(authorInfoById), authorInfoById);
+    // console.log(typeof(articles), articles);
+    // console.log(typeof(authorIds), authorIds);
+    // console.log(typeof(authorInfoById), authorInfoById);
     res.send({
         articles: articles.map((a) => ({
           articleId: a.articleId,
@@ -81,8 +84,10 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/articles/write", async (req, res) => {
-  console.log("특정 글읽기 페이지입니다");
-  res.status(200).render('write');
+  console.log("새로운 글쓰기 페이지입니다");	
+  const article = ""; // write.ejs는 modify 부분과 같이 쓰므로, 
+  //새 글 쓰기 일 경우 !article 이 true 로 넘길 수 있도록 빈 스트링값 전달
+res.status(200).render('write', {article: article});
 });
 
 

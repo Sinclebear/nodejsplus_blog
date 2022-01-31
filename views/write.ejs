@@ -55,7 +55,7 @@
                 } else {
                     $.ajax({
                     type: "POST",
-                    url: "/articles/write",
+                    url: "api/articles/write",
                     data: {
                         authorName: authorName,
                         articlePassword: articlePassword,
@@ -64,7 +64,7 @@
                     },
                     success: function (response) {
                         alert(response["msg"])
-                        window.location.href = '/articles'
+                        window.location.href = '/'
                     }
                     });
                 }
@@ -96,7 +96,7 @@
                 } else {
                     $.ajax({
                     type: "PATCH",
-                    url: "/articles/" + articleId + "/modify",
+                    url: "/api/articles/" + articleId + "/modify",
                     data: {
                         authorName: authorName,
                         articlePassword: articlePassword,
@@ -126,7 +126,7 @@
                     }
                     $.ajax({
                     type: "DELETE",
-                    url: "/articles/" + articleId + "/modify",
+                    url: "/api/articles/" + articleId + "/modify",
                     data: {
                         articlePassword: articlePassword,
                         articleId: articleId
@@ -136,7 +136,7 @@
                     },
                     success: function (response) {
                         alert(response["msg"])
-                        window.location.href = '/articles'
+                        window.location.href = '/'
                     }
                     });
                 } else {

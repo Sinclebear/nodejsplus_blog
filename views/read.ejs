@@ -67,6 +67,40 @@
                         <div class="content article-body">
                             <p><%=article.content%></p>
                         </div>
+                        <hr>
+                        <div class="content comments-body">
+                            <div class="block">댓글 <span style="color:deepskyblue"><%=commentsInfo.length%></span></div>
+                            <% for(commentInfo of commentsInfo){ %>
+                            
+                            <div class="content comment box">
+                                <div class="comments_userinfo tags">
+                                    <span class="tag is-rounded is-dark"><%=commentInfo.authorInfo.authorName%></span>
+                                    <span class="tag is-rounded is-light"><%=(commentInfo.createdAt).toLocaleDateString('ko-KR')%></span>
+                                </div>
+                                <div class="comments_content"><%=commentInfo.content%></div>
+                                <!-- 로그인한 사용자의 정보와 이 코멘트의 아이디가 같은경우만 출력-->
+                                <div class="comments_buttons">
+                                    <div class="buttons are-small is-right">
+                                        <button type="submit" class="button is-primary is-light" onclick="modifyComment();">
+                                            <span class="icon is-small"><i class="fas fa-edit"></i></span>
+                                            <span>수정</span>
+                                        </button>
+                                        <button type="submit" class="button is-danger is-light" onclick="deleteComment();">
+                                            <span class="icon is-small"><i class="fas fa-trash"></i></span>
+                                            <span>삭제</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+                            <div class="block"><strong>댓글 남기기</strong></div>
+                            <div class="control">
+                                <textarea id="new_comment" class="textarea" placeholder="여기에 댓글을 작성하기.." rows="3"></textarea>
+                                <div class="buttons is-right">
+                                    <button class="button is-primary is-light is-small is-right" onclick="postComment()">댓글 달기</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!-- END ARTICLE -->   

@@ -13,6 +13,7 @@ const BlogSchema = mongoose.Schema(
 BlogSchema.virtual("articleId").get(function () {
     return this._id.toHexString();
 });
+
 BlogSchema.set("toJSON", {
     virtuals: true,
 });
