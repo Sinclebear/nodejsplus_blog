@@ -1,4 +1,4 @@
-<!-- views/write.ejs -->
+<!-- views/signup.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,7 +20,7 @@
     <script src="https://kit.fontawesome.com/23b05056a7.js" crossorigin="anonymous"></script>
 
     <style>
-        *, input::placeholder{
+        *, input::placeholder, input, textarea{
             font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
         }
 
@@ -102,11 +102,11 @@
 						</div>
 						<div class="control">
                                 <div class="buttons is-centered">
-                                    <button type="submit" class="button is-primary is-medium" onclick="signUp();">
-                                        <span class="icon is-small"><i class="fas fa-sign-in-alt"></i></span>
+                                    <button type="submit" class="button is-info is-medium" onclick="signUp();">
+                                        <span class="icon is-small"><i class="fas fa-user-plus"></i></span>
                                         <span>회원가입</span>
                                     </button>
-                                    <button type="submit" class="button is-danger is-medium" onclick="window.location.href = '/login'">
+                                    <button type="submit" class="button is-info is-outlined is-medium" onclick="window.location.href = '/login'">
                                         <span class="icon is-small"><i class="far fa-window-close"></i></span>
                                         <span>취소하기</span>
                                     </button>
