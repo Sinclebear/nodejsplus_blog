@@ -23,65 +23,91 @@
     <!-- font-awesome 링크  -->
     <script src="https://kit.fontawesome.com/23b05056a7.js" crossorigin="anonymous"></script>
 
+    <script src="/api.js"></script>
+
     <style>
-        *, input::placeholder{
+        *, input::placeholder, input, textarea{
             font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
         }
     </style>
     <script>
+        let user;
+        getSelf(function (u) {
+            user = u;
+        });
+
+        function getAuthorInfo(){
+            $.ajax({
+                type: "GET",
+                url: "/api/articles/write",
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                success: function (response) {
+                    // alert(response["author"]);
+                    
+                    $('#authorName').val(response["author"].authorName);
+                    $('#authorId').val(response["author"].authorId);
+                    $('#authorName').attr("readonly", ""); // 사용자명은 고정으로 변경
+
+
+                },
+                error: function (xhr, status, error) {
+                    if (status == 401) {
+                        alert("로그인이 필요합니다.");
+                    } else {
+                        localStorage.clear();
+                        alert("알 수 없는 문제가 발생했습니다. 관리자에게 문의하세요.");
+                    }
+                    window.location.href = "/login";
+                },
+            });
+        }
 
         function writeArticle(){
-            let authorName = $('#authorName').val();
+            let authorId = $('#authorId').val();
             let articlePassword = $('#articlePassword').val();
             let title = $('#title').val();
             let content = $('#content').val();
     
-                if (authorName == '') {
-                    $('#authorName').focus()
-                    alert('작성자명을 입력하여 주세요.');
-                    return;
-                } else if (articlePassword == '') {
-                    $('#articlePassword').focus()
-                    alert('글 비밀번호를 입력하여 주세요.');
-                    return;
-                } else if (title == '') {
-                    $('#title').focus()
-                    alert('글 제목을 입력하여 주세요.');
-                    return;
-                } else if (content == '') {
-                    $('#content').focus()
-                    alert("글 내용을 입력하여 주세요.");
-                    return;
-                } else {
-                    $.ajax({
-                    type: "POST",
-                    url: "api/articles/write",
-                    data: {
-                        authorName: authorName,
-                        articlePassword: articlePassword,
-                        title: title,
-                        content: content
-                    },
-                    success: function (response) {
-                        alert(response["msg"])
-                        window.location.href = '/'
-                    }
-                    });
+            if (articlePassword == '') {
+                $('#articlePassword').focus()
+                alert('글 비밀번호를 입력하여 주세요.');
+                return;
+            } else if (title == '') {
+                $('#title').focus()
+                alert('글 제목을 입력하여 주세요.');
+                return;
+            } else if (content == '') {
+                $('#content').focus()
+                alert("글 내용을 입력하여 주세요.");
+                return;
+            };
+            $.ajax({
+                type: "POST",
+                url: "/api/articles/write",
+                data: {
+                    authorId: authorId,
+                    articlePassword: articlePassword,
+                    title: title,
+                    content: content
+                },
+                success: function (response) {
+                    alert(response["msg"])
+                    window.location.href = '/'
                 }
-            }
+            });
+        }
+            
 
         function modifyArticle(){
-            let authorName = $('#authorName').val();
+            let authorId = $('#authorId').val();
             let articlePassword = $('#articlePassword').val();
             let title = $('#title').val();
             let content = $('#content').val();
             let articleId = $('#articleId').val();
     
-                if (authorName == '') {
-                    $('#authorName').focus()
-                    alert('작성자명을 입력하여 주세요.');
-                    return;
-                } else if (articlePassword == '') {
+                if (articlePassword == '') {
                     $('#articlePassword').focus()
                     alert('글 비밀번호를 입력하여 주세요.');
                     return;
@@ -98,7 +124,7 @@
                     type: "PATCH",
                     url: "/api/articles/" + articleId + "/modify",
                     data: {
-                        authorName: authorName,
+                        authorId: authorId,
                         articlePassword: articlePassword,
                         title: title,
                         content: content,
@@ -109,7 +135,7 @@
                     },
                     success: function (response) {
                         alert(response["msg"]);
-                        window.location.href = '/articles';
+                        window.location.href = '/';
                     }
                     });
                 }
@@ -143,6 +169,15 @@
                     return false;
                 }
             }
+
+            window.onload = function() {
+                console.log("ready");
+                getAuthorInfo();
+                if(user === undefined){ // 로그인 하지 않은 경우 글쓰기, 로그아웃 버튼 숨김
+                    $("#signOutFunction").hide();
+                    $("#signInFunction").show();
+                }
+            };
     </script>
 </head>
 
@@ -168,8 +203,7 @@
       </section>
     <section class="hero is-halfheight">
 		<div class="hero-body">
-            <div class="container has-text-centered">
-                
+            <div class="container has-text-centered"> 
 				<div class="columns is-8 is-variable ">
 					<div class="column has-text-left">
 						<div class="field">
@@ -202,13 +236,13 @@
 							<label class="label">내용</label>
 							<div class="control">
 								<% if(Object.keys(article).length > 0) { %>
-                                <textarea class="textarea is-medium" id="content" placeholder="여기에 말하고 싶은 이야기를 작성해보세요!"><%=article.content %>
-                                </textarea>
+                                <textarea class="textarea is-medium" id="content" placeholder="여기에 말하고 싶은 이야기를 작성해보세요!"><%=article.content %></textarea>
                                 <% } else { %>
                                 <textarea class="textarea is-medium" id="content" placeholder="여기에 말하고 싶은 이야기를 작성해보세요!"></textarea>
                                 <% } %>
 							</div>
 						</div>
+                        <input type="hidden" id="authorId" type="number" value="">
                         <input type="hidden" id="articleId" type="number" value="<%=article.articleId%>">
 						<div class="control">
                             <% if(!article) { %>
@@ -233,6 +267,26 @@
 				</div>
 			</div>
 		</div>
+        <div class="hero-foot">
+            <nav class="tabs">
+                <div class="container">
+                    <ul class="is-right">
+                        <li>
+                            <a style="display: none" id="signInFunction" onclick="window.location.href='/login';">
+                                <span class="icon is-small"><i class="fas fa-sign-in-alt"></i></span>
+                                <span>로그인</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a id="signOutFunction" onclick="signOut();">
+                                <span class="icon is-small"><i class="fas fa-sign-out-alt"></i></span>
+                                <span>로그아웃</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
 	</section>
 
 </body>
