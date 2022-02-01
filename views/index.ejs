@@ -17,9 +17,11 @@
 
         <!-- AJAX 통신을 위한 jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    
+        
+        <script src="/api.js"></script>
+
         <style>
-            *, input::placeholder{
+            *, input::placeholder, input, textarea{
                 font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
             }
 
@@ -44,6 +46,12 @@
             }
         </style>
         <script>
+            let user;
+            getSelfInfo(function (u) {
+                user = u;
+            });
+            // alert(user);
+            
             // 최초 접근 시 모든 게시글을 불러온다.
             $(document).ready(function() {
                 console.log("ready");
@@ -52,6 +60,11 @@
                         makeCard(articles[i]);
                     }
                 });
+                if(user === undefined){ // 로그인 하지 않은 경우 글쓰기, 로그아웃 버튼 숨김
+                    $("#signOutFunction").hide();
+                    $("#signInFunction").show();
+                    $("#buttons_area").empty();
+                }
             });
 
             function getArticles(category, callback) {
@@ -100,11 +113,31 @@
                     <p class="title">나의 항해99 미니 블로그</p>
                 </div>
             </div>
+            <div class="hero-foot">
+                <nav class="tabs">
+                    <div class="container">
+                        <ul class="is-right">
+                            <li>
+                                <a style="display: none" id="signInFunction" onclick="window.location.href='/login';">
+                                    <span class="icon is-small"><i class="fas fa-sign-in-alt"></i></span>
+                                    <span>로그인</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="signOutFunction" onclick="signOut();">
+                                    <span class="icon is-small"><i class="fas fa-sign-out-alt"></i></span>
+                                    <span>로그아웃</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
         </section>
         
         <section class="container" id="card-container">
             <div class="block" id="myblock">
-                <div class="buttons is-right">
+                <div id="buttons_area" class="buttons is-right">
                     <a class="button is-primary" onclick="location.href='/articles/write'">
                         <span class="icon is-small"><i class="fas fa-pen"></i></span>
                         <span>글쓰기</span>
