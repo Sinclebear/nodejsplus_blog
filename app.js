@@ -9,11 +9,18 @@ const authMiddleware = require("./middlewares/auth-middleware");
 const Joi = require('joi');
 const port = 8080;
 
-// mongoose.connect("mongodb://localhost/nodejsblog_database", {
-mongoose.connect("mongodb://localhost/nodejsplus_blogdb", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// 로컬에서 테스트 중인 경우
+// mongoose.connect("mongodb://localhost/nodejsplus_blogdb", {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
+
+// Ubuntu EC2에서 테스트 중인 경우
+mongoose.connect("mongodb://test:test@localhost:27017/blog_database?authSource=admin&w=1",
+    { useNewUrlParser: true, useUnifiedTopology: true, ignoreUndefined: true }).catch((err) => {
+        console.error(err)
+    });
+
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 
