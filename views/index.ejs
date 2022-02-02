@@ -50,8 +50,11 @@
             getSelfInfo(function (u) {
                 user = u;
             });
-            // alert(user);
-            
+            if(user === undefined){ // 로그인 하지 않은 경우 글쓰기, 로그아웃 버튼 숨김
+                $("#signOutFunction").hide();
+                $("#signInFunction").show();
+                $("#buttons_area").empty();
+            }
             // 최초 접근 시 모든 게시글을 불러온다.
             $(document).ready(function() {
                 console.log("ready");
@@ -60,11 +63,6 @@
                         makeCard(articles[i]);
                     }
                 });
-                if(user === undefined){ // 로그인 하지 않은 경우 글쓰기, 로그아웃 버튼 숨김
-                    $("#signOutFunction").hide();
-                    $("#signInFunction").show();
-                    $("#buttons_area").empty();
-                }
             });
 
             function getArticles(category, callback) {
