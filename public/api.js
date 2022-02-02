@@ -21,7 +21,8 @@ function getSelfInfo(callback) {
             // }
             // alert("비회원입니다.");
             // window.location.href = "/login";
-            console.log("사용자 정보 없음");
+            console.log("비회원 입장");
+            // alert("비회원도 열람은 할 수 있어요..");
         },
     });
 }
@@ -40,10 +41,15 @@ function getSelf(callback) {
             callback(response.user);
         },
         error: function (xhr, status, error) {
-            if (status == 401) {
-                alert("로그인이 필요합니다.");
+            // if (status == 401) {
+            //     alert("로그인이 필요합니다.");
+            if (error === "Unauthorized") {
+                alert(xhr.responseJSON["errorMessage"]);
             } else {
                 localStorage.clear();
+                // alert(error.responseJSON.errorMessage);
+                // alert(JSON.stringify(xhr.responseJSON["errorMessage"]));
+                // alert(JSON.parse(request.responseText)["errorMessage"]);
                 alert("알 수 없는 문제가 발생했습니다. 관리자에게 문의하세요.");
             }
             window.location.href = "/login";
