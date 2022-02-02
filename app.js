@@ -73,7 +73,7 @@ router.get("/articles/write", authMiddleware, async (req, res) => {
 });
 
 // 글 생성, 입력
-router.post("/articles/write", async (req, res) => {
+router.post("/articles/write", authMiddleware, async (req, res) => {
 	const { authorId, articlePassword, title, content } = req.body;
 	console.log(req.body);
 
@@ -84,7 +84,7 @@ router.post("/articles/write", async (req, res) => {
 });
 
 // 코멘트 입력
-router.post("/comments/write", async (req, res) => {
+router.post("/comments/write", authMiddleware, async (req, res) => {
 	const { authorId, articleId, commentContent } = req.body;
 	console.log(req.body);
 
@@ -104,7 +104,7 @@ app.get("/articles/:articleId/modify", async (req, res) => {
 	res.status(200).render('write', {article:article} );
 });
 
-router.patch("/articles/:articleId/modify", async (req, res) => {
+router.patch("/articles/:articleId/modify", authMiddleware, async (req, res) => {
 	const { title, content, authorId, articlePassword, articleId } = req.body;
 	const article = await Article.findById(articleId);
 	// console.log(article.articlePassword);
@@ -118,7 +118,7 @@ router.patch("/articles/:articleId/modify", async (req, res) => {
 });
 
 // 블로그 글 삭제
-router.delete("/articles/:articleId/modify", async (req, res) => {
+router.delete("/articles/:articleId/modify", authMiddleware, async (req, res) => {
 	const { articlePassword, articleId } = req.body;
 	const existsArticle = await Article.findById(articleId);
 
@@ -137,7 +137,7 @@ router.delete("/articles/:articleId/modify", async (req, res) => {
 });
 
 //코멘트 수정
-router.patch("/comments/:commentId/modify", async (req, res) => {
+router.patch("/comments/:commentId/modify", authMiddleware, async (req, res) => {
 	const { commentId, articleId, modifiedCommentContent } = req.body;
     console.log("PATCH router comments 들어옴");
     console.log(req.body);
@@ -155,7 +155,7 @@ router.patch("/comments/:commentId/modify", async (req, res) => {
 });
 
 // 코멘트 삭제
-router.delete("/comments/:commentId/modify", async (req, res) => {
+router.delete("/comments/:commentId/modify", authMiddleware, async (req, res) => {
 	console.log("delete router comments 들어옴");
     const { commentId } = req.body;
     console.log(req.body);
