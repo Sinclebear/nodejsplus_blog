@@ -252,7 +252,7 @@
                 alert('코멘트 삭제 실패. commentId 없음');
             } else {
                 if(confirm("정말로 삭제하시겠습니까?")){
-                    alert(commentId)
+                    // alert(commentId)
                     $.ajax({
                         type: "DELETE",
                         url: "/api/comments/" + commentId + "/modify",
