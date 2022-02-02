@@ -66,9 +66,9 @@ router.get("/articles", async (req, res) => {
 
 // 글쓰기 접근 시 사용자 정보를 가져가기 위한 메소드
 router.get("/articles/write", authMiddleware, async (req, res) => {
-    console.log(res.locals.user);
+    // console.log(res.locals.user);
     const { authorId } = res.locals.user;
-    console.log("userID는 : ", authorId);
+    // console.log("userID는 : ", authorId);
     const authorInfo = await User.findById(authorId);
     res.status(200).send({
         author: {
@@ -82,7 +82,7 @@ router.get("/articles/write", authMiddleware, async (req, res) => {
 // 글 생성, 입력
 router.post("/articles/write", authMiddleware, async (req, res) => {
 	const { authorId, articlePassword, title, content } = req.body;
-	console.log(req.body);
+	// console.log(req.body);
 
 	// const postArticle = await Articles.create({ articleId, title, content, authorId, authorName, articlePassword });
 	const postArticle = await Article.create({ authorId, articlePassword, title, content });
@@ -93,7 +93,7 @@ router.post("/articles/write", authMiddleware, async (req, res) => {
 // 코멘트 입력
 router.post("/comments/write", authMiddleware, async (req, res) => {
 	const { authorId, articleId, commentContent } = req.body;
-	console.log(req.body);
+	// console.log(req.body);
 
 	// const postArticle = await Articles.create({ articleId, title, content, authorId, authorName, articlePassword });
 	const postArticle = await Comment.create({ authorId, articleId, commentContent });
@@ -106,8 +106,8 @@ app.get("/articles/:articleId/modify", async (req, res) => {
 	const { articleId } = req.params;
 
 	const article = await Article.findById(articleId);
-    console.log("article은 : " , article);
-    console.log("articleId는 : ", article.articleId);
+    // console.log("article은 : " , article);
+    // console.log("articleId는 : ", article.articleId);
 	res.status(200).render('write', {article:article} );
 });
 
@@ -146,8 +146,8 @@ router.delete("/articles/:articleId/modify", authMiddleware, async (req, res) =>
 //코멘트 수정
 router.patch("/comments/:commentId/modify", authMiddleware, async (req, res) => {
 	const { commentId, articleId, modifiedCommentContent } = req.body;
-    console.log("PATCH router comments 들어옴");
-    console.log(req.body);
+    // console.log("PATCH router comments 들어옴");
+    // console.log(req.body);
 	const comment = await Comment.findById(commentId);
 	// console.log(article.articlePassword);
 	// console.log(articlePassword);
@@ -163,12 +163,12 @@ router.patch("/comments/:commentId/modify", authMiddleware, async (req, res) => 
 
 // 코멘트 삭제
 router.delete("/comments/:commentId/modify", authMiddleware, async (req, res) => {
-	console.log("delete router comments 들어옴");
+	// console.log("delete router comments 들어옴");
     const { commentId } = req.body;
-    console.log(req.body);
-    console.log(commentId);
+    // console.log(req.body);
+    // console.log(commentId);
 	const existsComment = await Comment.findById(commentId);
-    console.log(existsComment);
+    // console.log(existsComment);
 
 	if (existsComment) { // existsArticle 이 존재하는 경우 = 쿼리 결과가 있는 경우
 		await Comment.findByIdAndDelete(commentId); // commentId 일치하는 것으로 삭제
@@ -239,7 +239,7 @@ router.post("/users", async (req, res) => {
         } else if (validationJoiMessage.includes('password')) { // 비밀번호가 4글자 미만인 경우
             validationErrorMessage = '비밀번호는 4글자 이상이어야 합니다.'
         }
-        console.log(err.details[0].message);
+        // console.log(err.details[0].message);
         res.status(400).send({
             errorMessage: validationErrorMessage
         });
@@ -268,18 +268,18 @@ router.post("/auth", async (req, res) => {
             });
             return;
         }
-        console.log(user.authorId);
-        console.log(user.authorName);
-        console.log(user.password);
+        // console.log(user.authorId);
+        // console.log(user.authorName);
+        // console.log(user.password);
         // const token = jwt.sign({ userId: user.userId }, "MY-SECRET-KEY"); // 토큰을 서버쪽에서 sign 하여 생성
         const token = jwt.sign({ authorId: user.authorId }, "MY-SECRET-KEY"); // 토큰을 서버쪽에서 sign 하여 생성
-        console.log(token);
-        console.log(typeof(token));
+        // console.log(token);
+        // console.log(typeof(token));
         res.send({
             token, // 전달
         });
     } catch (err) {
-        console.log(err);
+        // console.log(err);
         res.status(400).send({
             errorMessage: "요청한 데이터 형식이 올바르지 않습니다."
         });
@@ -291,8 +291,8 @@ router.post("/auth", async (req, res) => {
  * 사용자 인증 미들웨어. 경로와 function 사이에 미들웨어 변수를 불러와서 설정할 수 있다.
  */
 router.get("/users/me", authMiddleware, async (req, res) => {
-    console.log(res.locals);
-    console.log(typeof(res.locals));
+    // console.log(res.locals);
+    // console.log(typeof(res.locals));
     /*
      * res.locals 내용 예시
      * [Object: null prototpye] { user: { _id: new ObjectId("61f39afc469383be12e78e81"), email: 'test@test.com', nickname: 'mynickname', password: '1234', __v: 0 }}
@@ -311,22 +311,18 @@ router.get("/users/me", authMiddleware, async (req, res) => {
 
 
 app.get("/", async (req, res) => {
-  console.log("메인으로 접근함");
   res.status(200).render('index');  
 });
 
 app.get("/signup", async (req, res) => {
-  console.log("회원가입 페이지로 접근함");
   res.status(200).render('signup');  
 });
 
 app.get("/login", async (req, res) => {
-    console.log("로그인 페이지로 접근함");
     res.status(200).render('login');  
 });
 
 app.get("/articles/write", async (req, res) => {
-    console.log("새로운 글쓰기 페이지입니다");	
     const article = ""; // write.ejs는 modify 부분과 같이 쓰므로, 
     //새 글 쓰기 일 경우 !article 이 true 로 넘길 수 있도록 빈 스트링값 전달
     res.status(200).render('write', {article: article});
@@ -334,15 +330,9 @@ app.get("/articles/write", async (req, res) => {
 
 
 app.get("/articles/:articleId", async (req, res) => {
-    console.log("특정 글읽기 페이지입니다");
     const { articleId } = req.params; // localhost:3000/api/articles/1, 2, ... <- 여기서 req.params는 { articleId : '1' }, articleId = 1
-    console.log('-----------------------------');
-    console.log(articleId);
-    
     const article = await Article.findById(articleId);
-    console.log(article);
     const articleAuthor = await User.findById(article.authorId);
-    console.log(articleAuthor);
     const comments = await Comment.find({ articleId: articleId }).exec();
 
     const commentAuthorIds = comments.map((commentAuthor) => commentAuthor.authorId);
@@ -377,13 +367,12 @@ app.get("/articles/:articleId", async (req, res) => {
     // console.log(typeof(comments), comments); // []
     // console.log(typeof(commentAuthorIds), commentAuthorIds); // []
     // console.log(typeof(commentAuthorInfoById), commentAuthorInfoById); // {}
-    console.log(typeof(commentsInfo), commentsInfo);
+    // console.log(typeof(commentsInfo), commentsInfo);
     
 	res.status(200).render('read', { article: articleInfo, commentsInfo: commentsInfo }); // read.ejs 의 내용 render, articleId 값이 일치하는 article 내용 전달
 });
 
 app.get("/articles/:articleId/modify", async (req, res) => {
-  console.log("특정 글 수정 페이지입니다");
   res.status(200).render('read');
 });
 
