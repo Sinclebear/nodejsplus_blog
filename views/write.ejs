@@ -52,11 +52,16 @@
 
 
                 },
-                error: function (xhr, status, error) {
-                    if (status == 401) {
-                        alert("로그인이 필요합니다.");
+                error: function (xhr, status, error, response) {
+                    // if (status == 401) {
+                    if (error === "Unauthorized") {
+                        alert(xhr.responseJSON["errorMessage"]);
+                        // alert("로그인이 필요합니다.");
                     } else {
                         localStorage.clear();
+                        // alert(JSON.stringify(xhr.responseJSON["errorMessage"]));
+                        // alert(JSON.parse(request.responseText)["errorMessage"]);
+                        // alert(error.responseJSON.errorMessage);
                         alert("알 수 없는 문제가 발생했습니다. 관리자에게 문의하세요.");
                     }
                     window.location.href = "/login";
@@ -86,6 +91,9 @@
             $.ajax({
                 type: "POST",
                 url: "/api/articles/write",
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
                 data: {
                     authorId: authorId,
                     articlePassword: articlePassword,
@@ -130,6 +138,9 @@
                         content: content,
                         articleId: articleId
                     },
+                    headers: {
+                        authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
                     error: function (request, xhr, status) {
                         alert(JSON.parse(request.responseText)["msg"]);
                     },
@@ -151,19 +162,22 @@
                         return;
                     }
                     $.ajax({
-                    type: "DELETE",
-                    url: "/api/articles/" + articleId + "/modify",
-                    data: {
-                        articlePassword: articlePassword,
-                        articleId: articleId
-                    },
-                    error: function (request, xhr, status) {
-                        alert(JSON.parse(request.responseText)["msg"]);
-                    },
-                    success: function (response) {
-                        alert(response["msg"])
-                        window.location.href = '/'
-                    }
+                        type: "DELETE",
+                        url: "/api/articles/" + articleId + "/modify",
+                        data: {
+                            articlePassword: articlePassword,
+                            articleId: articleId
+                        },
+                        headers: {
+                            authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
+                        error: function (request, xhr, status) {
+                            alert(JSON.parse(request.responseText)["msg"]);
+                        },
+                        success: function (response) {
+                            alert(response["msg"])
+                            window.location.href = '/'
+                        }
                     });
                 } else {
                     return false;

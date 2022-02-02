@@ -99,6 +99,9 @@
                     articleId: articleId,
                     commentContent: commentContent,
                 },
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
                 success: function (response) {
                     alert(response["msg"])
                     window.location.href = '/articles/' + articleId;
@@ -123,6 +126,9 @@
                     articleId: articleId,
                     modifiedCommentContent: modifiedCommentContent,
                 },
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
                 success: function (response) {
                     alert(response["msg"])
                     window.location.href = '/articles/' + articleId;
@@ -142,6 +148,9 @@
                         url: "/api/comments/" + commentId + "/modify",
                         data: {
                             commentId: commentId,
+                        },
+                        headers: {
+                            authorization: `Bearer ${localStorage.getItem("token")}`,
                         },
                         error: function (request, xhr, status) {
                             alert(JSON.parse(request.responseText)["msg"]);
