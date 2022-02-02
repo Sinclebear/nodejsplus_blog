@@ -18,7 +18,7 @@
         <!-- AJAX 통신을 위한 jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         
-        <script src="/api.js"></script>
+        
 
         <style>
             *, input::placeholder, input, textarea{
@@ -45,70 +45,12 @@
                 height: 3.6em;
             }
         </style>
-        <script>
-            let user;
-            getSelfInfo(function (u) {
-                user = u;
-            });
-            if(user === undefined){ // 로그인 하지 않은 경우 글쓰기, 로그아웃 버튼 숨김
-                $("#signOutFunction").hide();
-                $("#signInFunction").show();
-                $("#buttons_area").empty();
-            }
-            // 최초 접근 시 모든 게시글을 불러온다.
-            $(document).ready(function() {
-                console.log("ready");
-                getArticles(null, function(articles){
-                    for (let i = 0; i<articles.length; i++){
-                        makeCard(articles[i]);
-                    }
-                });
-            });
-
-            function getArticles(category, callback) {
-                $("#articleCardList").empty();
-                $.ajax({
-                    type: "GET",
-                    url: `/api/articles`,
-                    // headers: {
-                    //     authorization: `Bearer ${localStorage.getItem("token")}`,
-                    // },
-                    success: function (response) {
-                        callback(response["articles"]);
-                    },
-                });
-            }
-
-            function makeCard(item){
-                let createdDate = new Date(item["createdAt"]).toLocaleDateString('ko-KR'); // 한국식 연월일 날짜로 변경
-                let temp_html = `<div class="column is-one-third">
-                    <div class="card is-shady" style="cursor: pointer;" onclick="location.href='/articles/${item["articleId"]}'">
-                        <div class="card-content">
-                            <p class="title is-4" id="titleSummary">${item["title"]}</p>
-                            <p class="subtitle" id="contentSummary">${item["content"]}</p>
-                        </div>
-                        <footer class="card-footer">
-                            <p class="card-footer-item">
-                                <span>by <b>${item["authorInfo"]["authorName"]}</b></span>
-                            </p>
-                            <p class="card-footer-item">
-                                <span>
-                                    <time>${createdDate}</time>
-                                </span>
-                            </p>
-                        </footer>
-                    </div>    
-                </div>`;
-                $("#articleCardList").append(temp_html);
-            }
-            
-        </script>
     </head>
     <body>
         <section class="hero is-info is-small">
             <div class="hero-body">
                 <div class="container has-text-centered">
-                    <p class="title">나의 항해99 미니 블로그</p>
+                    <a onclick="window.location.href='/';"><p class="title">나의 항해99 미니 블로그</p></a>
                 </div>
             </div>
             <div class="hero-foot">
@@ -164,4 +106,64 @@
             </div>
         </section>
     </body>
+    <script src="/api.js"></script>
+    <script>
+        let user;
+        getSelfInfo(function (u) {
+            user = u;
+        });
+        // 최초 접근 시 모든 게시글을 불러온다.
+        $(document).ready(function() {
+            console.log("ready");
+            getArticles(null, function(articles){
+                for (let i = 0; i<articles.length; i++){
+                    makeCard(articles[i]);
+                }
+            });
+            
+            if(user === undefined){ // 로그인 하지 않은 경우 글쓰기, 로그아웃 버튼 숨김
+                $("#signOutFunction").hide();
+                $("#signInFunction").show();
+                $("#buttons_area").empty();
+            }
+        });
+
+        function getArticles(category, callback) {
+            $("#articleCardList").empty();
+            $.ajax({
+                type: "GET",
+                url: `/api/articles`,
+                // headers: {
+                //     authorization: `Bearer ${localStorage.getItem("token")}`,
+                // },
+                success: function (response) {
+                    callback(response["articles"]);
+                },
+            });
+        }
+
+        function makeCard(item){
+            let createdDate = new Date(item["createdAt"]).toLocaleDateString('ko-KR'); // 한국식 연월일 날짜로 변경
+            let temp_html = `<div class="column is-one-third">
+                <div class="card is-shady" style="cursor: pointer;" onclick="location.href='/articles/${item["articleId"]}'">
+                    <div class="card-content">
+                        <p class="title is-4" id="titleSummary">${item["title"]}</p>
+                        <p class="subtitle" id="contentSummary">${item["content"]}</p>
+                    </div>
+                    <footer class="card-footer">
+                        <p class="card-footer-item">
+                            <span>by <b>${item["authorInfo"]["authorName"]}</b></span>
+                        </p>
+                        <p class="card-footer-item">
+                            <span>
+                                <time>${createdDate}</time>
+                            </span>
+                        </p>
+                    </footer>
+                </div>    
+            </div>`;
+            $("#articleCardList").append(temp_html);
+        }
+        
+    </script>
 </html>

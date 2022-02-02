@@ -20,13 +20,123 @@
     <!-- font-awesome 링크  -->
     <script src="https://kit.fontawesome.com/23b05056a7.js" crossorigin="anonymous"></script>
 
-    <script src="/api.js"></script>
-
     <style>
         *, input::placeholder, input, textarea{
             font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
         }
     </style>
+</head>
+
+
+<body>
+    <section class="hero is-info is-small">
+        <div class="hero-body">
+        <a onclick="window.location.href='/';">
+          <p class="title" style="text-align: center;">
+            나의 항해99 미니 블로그
+          </p>
+        </a>
+          <div class="hero-foot">
+            <nav class="tabs">
+                <div class="container">
+                    <ul class="is-right">
+                        <li>
+                            <a style="display: none" id="signInFunction" onclick="window.location.href='/login';">
+                                <span class="icon is-small"><i class="fas fa-sign-in-alt"></i></span>
+                                <span>로그인</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a id="signOutFunction" onclick="signOut();">
+                                <span class="icon is-small"><i class="fas fa-sign-out-alt"></i></span>
+                                <span>로그아웃</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        </div>
+      </section>
+      <div class="container">
+        <!-- START ARTICLE FEED -->
+        <section class="articles">
+            <div class="column is-8 is-offset-2">
+                <div class="block" id="myblock">
+                    <div class="buttons is-right">
+                        <a id="modifyButton" class="button is-primary" onclick="location.href='<%=article.articleId%>/modify'">
+                            <span class="icon is-small"><i class="fas fa-edit"></i></span>
+                            <span>수정하기</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- START ARTICLE -->
+                <input type="hidden" id="authorId" value="<%=article.authorId%>"></input>
+                <div class="card article">
+                    <div class="card-content">
+                        <div class="media">
+                            <div class="media-content has-text-centered">
+                                <p class="title article-title"><%=article.title%></p>
+                                <div class="tags has-addons level-item">
+                                    <span class="tag is-rounded is-info">by <%=article.authorName%></span>
+                                    <span class="tag is-rounded"><%=(article.createdAt).toLocaleDateString('ko-KR')%></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content article-body">
+                            <p><%=article.content%></p>
+                        </div>
+                        <hr>
+                        <div class="content comments-body">
+                            <div class="block">댓글 <span style="color:deepskyblue"><%=commentsInfo.length%></span></div>
+                            <% commentsInfo.forEach(function(commentInfo, index){ %>
+                            <div id="<%=commentInfo.authorInfo.authorId%>" class="commentAuthorId content comment box">
+                                <div class="comments_userinfo tags">
+                                    <span class="tag is-rounded is-dark"><%=commentInfo.authorInfo.authorName%></span>
+                                    <span class="tag is-rounded is-light"><%=(commentInfo.createdAt).toLocaleDateString('ko-KR')%></span>
+                                </div>
+                                <div id="<%=commentInfo.commentId%>" class="comments_content"><%=commentInfo.content%></div>
+                                <textarea id="commentModifyTextarea<%=index%>" class="textarea" rows="3"><%=commentInfo.content%></textarea>
+                                <!-- 로그인한 사용자의 정보와 이 코멘트의 아이디가 같은경우만 수정/삭제 출력-->
+                                <div class="comments_buttons">
+                                    <div class="buttons are-small is-right">
+                                        <button id="commentModifyButton<%=index%>" type="submit" class="button is-primary is-light" onclick="toggleModify('<%=index%>');">
+                                            <span class="icon is-small"><i class="fas fa-edit"></i></span>
+                                            <span>수정</span>
+                                        </button>
+                                        <button id="commentDeleteButton<%=index%>" type="submit" class="button is-danger is-light" onclick="deleteComment('<%=commentInfo.commentId%>', '<%=article.articleId%>');">
+                                            <span class="icon is-small"><i class="fas fa-trash"></i></span>
+                                            <span>삭제</span>
+                                        </button>
+                                        <button id="commentModifyConfirmButton<%=index%>" type="submit" class="button is-info is-light" onclick="modifyComment('<%=commentInfo.commentId%>', '<%=article.articleId%>', '<%=index%>');">
+                                            <span class="icon is-small"><i class="fas fa-edit"></i></span>
+                                            <span>수정완료</span>
+                                        </button>
+                                        <button id="commentCancelButton<%=index%>" type="submit" class="button is-primary is-danger is-outlined" onclick="toggleModify('<%=index%>');">
+                                            <span class="icon is-small"><i class="far fa-window-close"></i></span>
+                                            <span>취소</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                            <div class="block"><strong>댓글 남기기</strong></div>
+                            <div class="control">
+                                <input type="hidden" id="articleId" value="<%=article.articleId%>"></input>
+                                <input type="hidden" id="currentUserId" value=""></input>
+                                <textarea id="new_comment" class="textarea" placeholder="여기에 댓글을 작성하기.." rows="3"></textarea>
+                                <div class="buttons is-right">
+                                    <button type="submit" id="postCommentButton" class="button is-primary is-light is-small is-right" onclick="postComment()">댓글 달기</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END ARTICLE -->   
+			</div>
+		</div>
+	</section>
+    <script src="/api.js"></script>
     <script>
         let user;
         getSelfInfo(function (u) {
@@ -173,116 +283,6 @@
         // });
         
     </script>
-</head>
-
-
-<body>
-    <section class="hero is-info is-small">
-        <div class="hero-body">
-          <p class="title" style="text-align: center;">
-            나의 항해99 미니 블로그
-          </p>
-          <div class="hero-foot">
-            <nav class="tabs">
-                <div class="container">
-                    <ul class="is-right">
-                        <li>
-                            <a style="display: none" id="signInFunction" onclick="window.location.href='/login';">
-                                <span class="icon is-small"><i class="fas fa-sign-in-alt"></i></span>
-                                <span>로그인</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a id="signOutFunction" onclick="signOut();">
-                                <span class="icon is-small"><i class="fas fa-sign-out-alt"></i></span>
-                                <span>로그아웃</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-        </div>
-      </section>
-      <div class="container">
-        <!-- START ARTICLE FEED -->
-        <section class="articles">
-            <div class="column is-8 is-offset-2">
-                <div class="block" id="myblock">
-                    <div class="buttons is-right">
-                        <a id="modifyButton" class="button is-primary" onclick="location.href='<%=article.articleId%>/modify'">
-                            <span class="icon is-small"><i class="fas fa-edit"></i></span>
-                            <span>수정하기</span>
-                        </a>
-                    </div>
-                </div>
-                <!-- START ARTICLE -->
-                <input type="hidden" id="authorId" value="<%=article.authorId%>"></input>
-                <div class="card article">
-                    <div class="card-content">
-                        <div class="media">
-                            <div class="media-content has-text-centered">
-                                <p class="title article-title"><%=article.title%></p>
-                                <div class="tags has-addons level-item">
-                                    <span class="tag is-rounded is-info">by <%=article.authorName%></span>
-                                    <span class="tag is-rounded"><%=(article.createdAt).toLocaleDateString('ko-KR')%></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="content article-body">
-                            <p><%=article.content%></p>
-                        </div>
-                        <hr>
-                        <div class="content comments-body">
-                            <div class="block">댓글 <span style="color:deepskyblue"><%=commentsInfo.length%></span></div>
-                            <% commentsInfo.forEach(function(commentInfo, index){ %>
-                            <div id="<%=commentInfo.authorInfo.authorId%>" class="commentAuthorId content comment box">
-                                <div class="comments_userinfo tags">
-                                    <span class="tag is-rounded is-dark"><%=commentInfo.authorInfo.authorName%></span>
-                                    <span class="tag is-rounded is-light"><%=(commentInfo.createdAt).toLocaleDateString('ko-KR')%></span>
-                                </div>
-                                <div id="<%=commentInfo.commentId%>" class="comments_content"><%=commentInfo.content%></div>
-                                <textarea id="commentModifyTextarea<%=index%>" class="textarea" rows="3"><%=commentInfo.content%></textarea>
-                                <!-- 로그인한 사용자의 정보와 이 코멘트의 아이디가 같은경우만 수정/삭제 출력-->
-                                <div class="comments_buttons">
-                                    <div class="buttons are-small is-right">
-                                        <button id="commentModifyButton<%=index%>" type="submit" class="button is-primary is-light" onclick="toggleModify('<%=index%>');">
-                                            <span class="icon is-small"><i class="fas fa-edit"></i></span>
-                                            <span>수정</span>
-                                        </button>
-                                        <button id="commentDeleteButton<%=index%>" type="submit" class="button is-danger is-light" onclick="deleteComment('<%=commentInfo.commentId%>', '<%=article.articleId%>');">
-                                            <span class="icon is-small"><i class="fas fa-trash"></i></span>
-                                            <span>삭제</span>
-                                        </button>
-                                        <button id="commentModifyConfirmButton<%=index%>" type="submit" class="button is-info is-light" onclick="modifyComment('<%=commentInfo.commentId%>', '<%=article.articleId%>', '<%=index%>');">
-                                            <span class="icon is-small"><i class="fas fa-edit"></i></span>
-                                            <span>수정완료</span>
-                                        </button>
-                                        <button id="commentCancelButton<%=index%>" type="submit" class="button is-primary is-danger is-outlined" onclick="toggleModify('<%=index%>');">
-                                            <span class="icon is-small"><i class="far fa-window-close"></i></span>
-                                            <span>취소</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <% }) %>
-                            <div class="block"><strong>댓글 남기기</strong></div>
-                            <div class="control">
-                                <input type="hidden" id="articleId" value="<%=article.articleId%>"></input>
-                                <input type="hidden" id="currentUserId" value=""></input>
-                                <textarea id="new_comment" class="textarea" placeholder="여기에 댓글을 작성하기.." rows="3"></textarea>
-                                <div class="buttons is-right">
-                                    <button type="submit" id="postCommentButton" class="button is-primary is-light is-small is-right" onclick="postComment()">댓글 달기</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- END ARTICLE -->   
-			</div>
-		</div>
-	</section>
-
 </body>
 
 </html>
