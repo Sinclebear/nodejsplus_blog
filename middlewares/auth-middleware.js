@@ -5,7 +5,7 @@ module.exports = (req, res, next) => {
     
     const { authorization } = req.headers;
     // console.log("req.headers? : ", req.headers); // 헤더 어디감?
-    console.log("authorization : ", authorization);
+    // console.log("authorization : ", authorization);
     // if (authorization === undefined){
     //     res.status(401).send({
     //         errorMessage: '로그인이 필요한 페이지 입니다.',
@@ -31,7 +31,7 @@ module.exports = (req, res, next) => {
             next();
         });
     } catch (error) {
-        console.log("auth middleware에서 에러"); // 사용자 로그인하지 않고, 직접 localhost:8080/articles 로 접속하면 여기로 진입
+        // console.log("auth middleware에서 에러"); // 사용자 로그인하지 않고, 직접 localhost:8080/articles 로 접속하면 여기로 진입
         res.status(401).send({
             errorMessage: '로그인이 필요한 페이지 입니다.',
         });
