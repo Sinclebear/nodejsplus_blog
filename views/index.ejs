@@ -58,13 +58,13 @@
                     <div class="container">
                         <ul class="is-right">
                             <li>
-                                <a style="display: none" id="signInFunction" onclick="window.location.href='/login';">
+                                <a id="signInFunction" onclick="window.location.href='/login';">
                                     <span class="icon is-small"><i class="fas fa-sign-in-alt"></i></span>
                                     <span>로그인</span>
                                 </a>
                             </li>
                             <li>
-                                <a id="signOutFunction" onclick="signOut();">
+                                <a style="display: none" id="signOutFunction" onclick="signOut();">
                                     <span class="icon is-small"><i class="fas fa-sign-out-alt"></i></span>
                                     <span>로그아웃</span>
                                 </a>
@@ -77,7 +77,7 @@
         
         <section class="container" id="card-container">
             <div class="block" id="myblock">
-                <div id="buttons_area" class="buttons is-right">
+                <div style="display: none" id="buttons_area" class="buttons is-right">
                     <a class="button is-primary" onclick="location.href='/articles/write'">
                         <span class="icon is-small"><i class="fas fa-pen"></i></span>
                         <span>글쓰기</span>
@@ -111,14 +111,19 @@
         let user = "";
         getSelfInfo(function (u) {
             user = u;
-            
+            if(user !== ''){ // 로그인 한 경우, 글쓰기, 로그아웃 버튼을 보여줌
+                $("#signOutFunction").show();
+                $("#signInFunction").hide();
+                $("#buttons_area").show();
+            }
         });
         window.onload = function() {
-            if(user === ''){ // 로그인 하지 않은 경우 글쓰기, 로그아웃 버튼 숨김
-                $("#signOutFunction").hide();
-                $("#signInFunction").show();
-                $("#buttons_area").empty();
-            }
+            // alert(user.authorName);
+            // if(user === ''){ // 로그인 하지 않은 경우 글쓰기, 로그아웃 버튼 숨김
+            //     $("#signOutFunction").hide();
+            //     $("#signInFunction").show();
+            //     $("#buttons_area").empty();
+            // }
         }
 
         // 최초 접근 시 모든 게시글을 불러온다.
