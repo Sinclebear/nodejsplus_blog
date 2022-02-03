@@ -19,6 +19,7 @@
     <!-- font-awesome 링크  -->
     <script src="https://kit.fontawesome.com/23b05056a7.js" crossorigin="anonymous"></script>
 
+    <script src="/api.js"></script>
     <style>
         *, input::placeholder, input, textarea{
             font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
@@ -33,7 +34,7 @@
 
         if (localStorage.getItem("token")) {
             getSelf(function () {
-                alert("이미 로그인이 되어있습니다. 항해99 블로그 메인 페이지로 이동합니다.");
+                alert("이미 로그인이 되어있습니다.");
                 window.location.replace("/");
             });
         }
