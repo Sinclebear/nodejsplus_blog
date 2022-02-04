@@ -1,9 +1,15 @@
 {
+  "scripts": {
+    "prettify": "prettier --write *.js **/*.js"
+  },
   "dependencies": {
     "ejs": "^3.1.6",
     "express": "^4.17.2",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.1.8"
+  },
+  "devDependencies": {
+    "prettier": "^2.5.1"
   }
 }
