@@ -57,9 +57,6 @@ router.get('/articles', async (req, res) => {
                 {}
             )
         );
-    // console.log(typeof(articles), articles);
-    // console.log(typeof(authorIds), authorIds);
-    // console.log(typeof(authorInfoById), authorInfoById);
     res.send({
         articles: articles.map((a) => ({
             articleId: a.articleId,
