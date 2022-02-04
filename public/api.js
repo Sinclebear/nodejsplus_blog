@@ -1,9 +1,9 @@
 function getSelfInfo(callback) {
     $.ajax({
-        type: "GET",
-        url: "/api/users/me",
+        type: 'GET',
+        url: '/api/users/me',
         headers: {
-            authorization: `Bearer ${localStorage.getItem("token")}`,
+            authorization: `Bearer ${localStorage.getItem('token')}`,
         },
         success: function (response) {
             // alert("회원인데요?");
@@ -21,21 +21,20 @@ function getSelfInfo(callback) {
             // }
             // alert("비회원입니다.");
             // window.location.href = "/login";
-            console.log("비회원 입장");
+            console.log('비회원 입장');
             // alert("비회원도 열람은 할 수 있어요..");
         },
     });
 }
 
-
 // 유저 정보를 가져오는 함수
 function getSelf(callback) {
     // alert("get self 실행");
     $.ajax({
-        type: "GET",
-        url: "/api/users/me",
+        type: 'GET',
+        url: '/api/users/me',
         headers: {
-            authorization: `Bearer ${localStorage.getItem("token")}`,
+            authorization: `Bearer ${localStorage.getItem('token')}`,
         },
         success: function (response) {
             callback(response.user);
@@ -43,25 +42,25 @@ function getSelf(callback) {
         error: function (xhr, status, error) {
             // if (status == 401) {
             //     alert("로그인이 필요합니다.");
-            if (error === "Unauthorized") {
-                alert(xhr.responseJSON["errorMessage"]);
+            if (error === 'Unauthorized') {
+                alert(xhr.responseJSON['errorMessage']);
             } else {
                 localStorage.clear();
                 // alert(error.responseJSON.errorMessage);
                 // alert(JSON.stringify(xhr.responseJSON["errorMessage"]));
                 // alert(JSON.parse(request.responseText)["errorMessage"]);
-                alert("알 수 없는 문제가 발생했습니다. 관리자에게 문의하세요.");
+                alert('알 수 없는 문제가 발생했습니다. 관리자에게 문의하세요.');
             }
-            window.location.href = "/login";
+            window.location.href = '/login';
         },
     });
 }
 
 function signOut() {
-    if(confirm("로그아웃 하시겠습니까?")){
-        alert("로그아웃 되었습니다.")
+    if (confirm('로그아웃 하시겠습니까?')) {
+        alert('로그아웃 되었습니다.');
         localStorage.clear();
-        window.location.href = "/login";
+        window.location.href = '/login';
     } else {
         return false;
     }

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const CommentSchema = mongoose.Schema(
     {
@@ -9,11 +9,11 @@ const CommentSchema = mongoose.Schema(
     { timestamps: true }
 );
 
-CommentSchema.virtual("commentId").get(function () {
+CommentSchema.virtual('commentId').get(function () {
     return this._id.toHexString();
 });
-CommentSchema.set("toJSON", {
+CommentSchema.set('toJSON', {
     virtuals: true,
 });
 
-module.exports = mongoose.model("Comment", CommentSchema);
+module.exports = mongoose.model('Comment', CommentSchema);

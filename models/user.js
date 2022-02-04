@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const UserSchema = mongoose.Schema(
     {
@@ -7,11 +7,11 @@ const UserSchema = mongoose.Schema(
     },
     { timestamps: true }
 );
-UserSchema.virtual("authorId").get(function () {
+UserSchema.virtual('authorId').get(function () {
     return this._id.toHexString();
 });
-UserSchema.set("toJSON", {
+UserSchema.set('toJSON', {
     virtuals: true,
 });
-  
-module.exports = mongoose.model("User", UserSchema);
+
+module.exports = mongoose.model('User', UserSchema);
