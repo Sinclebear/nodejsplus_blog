@@ -10,24 +10,24 @@ const Joi = require('joi');
 const port = 8080;
 
 // 로컬에서 테스트 중인 경우
-// mongoose.connect("mongodb://localhost/nodejsplus_blogdb", {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
+mongoose.connect("mongodb://localhost/nodejsplus_blogdb", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 // Ubuntu EC2에서 테스트 중인 경우
-mongoose
-    .connect(
-        'mongodb://test:test@localhost:27017/blog_database?authSource=admin&w=1',
-        {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            ignoreUndefined: true,
-        }
-    )
-    .catch((err) => {
-        console.error(err);
-    });
+// mongoose
+//     .connect(
+//         'mongodb://test:test@localhost:27017/blog_database?authSource=admin&w=1',
+//         {
+//             useNewUrlParser: true,
+//             useUnifiedTopology: true,
+//             ignoreUndefined: true,
+//         }
+//     )
+//     .catch((err) => {
+//         console.error(err);
+//     });
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -40,10 +40,10 @@ router.get('/articles', async (req, res) => {
     // const { userId } = res.locals.user;
     // console.log(userId);
     const articles = await Article.find().sort({ createdAt: 'desc' }).exec();
-    // console.log(articles); // [{ }, { }, { }]
+    // console.log(articles); // [{ article의 내용. _id: ..., title: ..., content: ... }, { }, { }]
 
-    const authorIds = articles.map((author) => author.authorId); //  authorId만 추출
-
+    const authorIds = articles.map((author) => author.authorId); 
+    // console.log(authorIds); // authorId만 추출. ['authorId1', 'authorId2', 'authorId3', ..]
     const authorInfoById = await User.find({
         _id: { $in: authorIds },
     })
@@ -57,6 +57,7 @@ router.get('/articles', async (req, res) => {
                 {}
             )
         );
+    // console.log(authorInfoById); // { authorId1: { _id: .. , authorName: .. , password: .. ,}, authorId2: {}, .. }
     res.send({
         articles: articles.map((a) => ({
             articleId: a.articleId,
