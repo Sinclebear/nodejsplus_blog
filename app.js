@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const User = require('./models/user');
 const Article = require('./models/blog');
 const Comment = require('./models/comment');
-// const res = require("express/lib/response");
 const authMiddleware = require('./middlewares/auth-middleware');
 const Joi = require('joi');
 const port = 8080;
@@ -35,15 +34,16 @@ db.on('error', console.error.bind(console, 'connection error:'));
 const app = express();
 const router = express.Router();
 
-// router.get("/articles", authMiddleware, async (req, res) => {
+// 전체 게시글 불러오기. index.ejs > getArticles()
 router.get('/articles', async (req, res) => {
-    // const { userId } = res.locals.user;
-    // console.log(userId);
+    console.log(req.body);
     const articles = await Article.find().sort({ createdAt: 'desc' }).exec();
     // console.log(articles); // [{ article의 내용. _id: ..., title: ..., content: ... }, { }, { }]
 
     const authorIds = articles.map((author) => author.authorId); 
     // console.log(authorIds); // authorId만 추출. ['authorId1', 'authorId2', 'authorId3', ..]
+    
+    // $in : 비교 연산자. 주어진 배열(authorIds) 안에 속하는 값
     const authorInfoById = await User.find({
         _id: { $in: authorIds },
     })
@@ -67,14 +67,11 @@ router.get('/articles', async (req, res) => {
             authorInfo: authorInfoById[a.authorId],
         })),
     });
-    // res.send({ articles });
 });
 
-// 글쓰기 접근 시 사용자 정보를 가져가기 위한 메소드
+// 글쓰기 접근 시 사용자 정보를 가져가기 위한 메소드. write.ejs > getAuthorInfo()
 router.get('/articles/write', authMiddleware, async (req, res) => {
-    // console.log(res.locals.user);
     const { authorId } = res.locals.user;
-    // console.log("userID는 : ", authorId);
     const authorInfo = await User.findById(authorId);
     res.status(200).send({
         author: {
@@ -105,7 +102,6 @@ router.post('/comments/write', authMiddleware, async (req, res) => {
     const { authorId, articleId, commentContent } = req.body;
     // console.log(req.body);
 
-    // const postArticle = await Articles.create({ articleId, title, content, authorId, authorName, articlePassword });
     const postArticle = await Comment.create({
         authorId,
         articleId,
@@ -375,7 +371,7 @@ router.post('/auth', async (req, res) => {
 router.get('/users/me', authMiddleware, async (req, res) => {
     // console.log(res.locals);
     // console.log(typeof(res.locals));
-    /*
+    /**
      * res.locals 내용 예시
      * [Object: null prototpye] { user: { _id: new ObjectId("61f39afc469383be12e78e81"), email: 'test@test.com', nickname: 'mynickname', password: '1234', __v: 0 }}
      */

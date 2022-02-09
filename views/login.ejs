@@ -24,7 +24,6 @@
         *, input::placeholder, input, textarea{
             font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
         }
-
     </style>
     <script>
         function signOut() {
@@ -35,7 +34,7 @@
         if (localStorage.getItem("token")) {
             getSelf(function () {
                 alert("이미 로그인이 되어있습니다.");
-                window.location.replace("/");
+                window.location.replace("/"); // 로그인되어 있는데 로그인 페이지로 온 경우, 메인 페이지(전체 게시글 조회)로 돌려보냄
             });
         }
 
@@ -113,9 +112,6 @@
                                         <span class="icon is-small"><i class="fas fa-binoculars"></i></span>
                                         <span>둘러보기</span>
                                     </button>
-                                    <!-- <button type="button" class="button is-danger is-outline is-medium" onclick="signOut();">
-                                        <span>토큰 삭제!!!!</span>
-                                    </button> -->
                                 </div>
 						</div>
 					</div>

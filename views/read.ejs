@@ -147,35 +147,42 @@
             console.log("ready");
             // alert(user["authorId"]);
             // 현재 user의 authorId랑 $('#authorId').val() 값 비교해서 true false 판별
-            if(user !== undefined){ // 로그인 상태일때
+            
+            // 로그인 상태일때
+            if(user !== undefined){ 
                 let currentAuthorId = user["authorId"];
                 let articleAuthorId = $('#authorId').val();
-                if(currentAuthorId !== articleAuthorId){
+                // 작성자가 아닌 경우 글 [수정하기] 버튼 숨기기
+                if(currentAuthorId !== articleAuthorId){ 
                     $('#modifyButton').hide();
                 }
-                $('#currentUserId').attr("value",currentAuthorId); // 글 부분 변경
+                $('#currentUserId').attr("value",currentAuthorId); // 글 부분 변경. 초기 input value가 비어있음(hidden 상태)
 
-                let commentsHTML = $('.commentAuthorId').get(); // 코멘트 권한 변경
+                let commentsHTML = $('.commentAuthorId').get(); // 코멘트 권한 변경. class가 commentAuthorId인 값을 모두 가져옴 (모든 댓글)
                 for (let i=0; i<commentsHTML.length; i++){
                     index = i.toString();
-                    // alert(commentsHTML[i].id);
-                    if (currentAuthorId !== commentsHTML[i].id) { // 코멘트를 로그인 한 사용자가 쓴것이 아닌 경우
+                    // 코멘트를 로그인 한 사용자가 쓴것이 아닌 경우
+                    if (currentAuthorId !== commentsHTML[i].id) { 
                         $('#commentModifyTextarea' + index).hide();
-                        commentsHTML[i].children[3].innerHTML=''; // 댓글 DIV에서 버튼부분(children[3])을 없애버림
-                    } else {
+                        commentsHTML[i].children[3].innerHTML=''; // 댓글 DIV에서 버튼부분(children[3]) 내부 HTML 내용을 제거함
+                    } else { // 코멘트를 현재 로그인 한 사용자가 쓴 경우, [댓글 수정 textarea, 수정완료 버튼, 취소 버튼]을 지우지 않고 숨겨둠
                         $('#commentModifyTextarea' + index).hide();
                         $('#commentModifyConfirmButton' + index).hide();
                         $('#commentCancelButton' + index).hide();
                     }
                 }
             } else { // 비회원 상태일 경우
+                
+                // 댓글 입력이 불가하도록 disabled 처리, placeholder 내용 알맞게 변경
                 $('#new_comment').attr("disabled", "");
-                $('#new_comment').attr("placeholder", "로그인 후 댓글 작성이 가능합니다.");
+                $('#new_comment').attr("placeholder", "로그인 후 댓글 작성이 가능합니다."); 
+
+                // [댓글 달기] 버튼, 글 [수정하기] 버튼 숨기기
                 $('#postCommentButton').hide();
                 $('#modifyButton').hide();
                 $("#signOutFunction").hide();
                 $("#signInFunction").show();
-                let commentsHTML = $('.commentAuthorId').get(); // 코멘트 권한 변경
+                let commentsHTML = $('.commentAuthorId').get(); // 코멘트 권한 변경. 모든 코멘트 접근 못하도록 요소 삭제
                 for (let i=0; i<commentsHTML.length; i++){
                     index = i.toString();
                     commentsHTML[i].children[3].innerHTML='';
@@ -184,6 +191,7 @@
             }
         };
 
+        // .hide(), .show() 값을 서로 바꿔줄 toggle 기능.
         function toggleModify(index){
             $('#commentModifyTextarea' + index).toggle();
             $('#commentModifyConfirmButton' + index).toggle();
@@ -192,8 +200,9 @@
             $('#commentDeleteButton' + index).toggle();
         }
 
+        // 댓글 작성 함수
         function postComment(){
-            let authorId = user["authorId"]; // 로그인한 사용자로 입력. 안되면 .val로
+            let authorId = user["authorId"]; // 로그인한 사용자로 입력.
             let articleId = $('#articleId').val();
             let commentContent = $('#new_comment').val();
             if (commentContent == '') {
@@ -219,9 +228,9 @@
             });
         }
         
-        // 수정중...
+        // 댓글 수정 함수. 정확히는, 사용자가 [수정] -> [수정완료]를 눌렀을 때 실행
         function modifyComment(commentId, articleId, index){
-            let authorId = user["authorId"]; // 로그인한 사용자로 입력. 안되면 .val로
+            let authorId = user["authorId"]; // 로그인한 사용자의 authorId 값을 localStorage 토큰에서 가져와 입력.
             let modifiedCommentContent = $('#commentModifyTextarea' + index).val();
             if (modifiedCommentContent == '') {
                 $('#commentModifyTextarea' + index).focus();
@@ -245,14 +254,13 @@
                 }
             });
         }
-        //
-
+        
+        // 댓글 삭제 함수
         function deleteComment(commentId, articleId){
             if (!commentId){
                 alert('코멘트 삭제 실패. commentId 없음');
             } else {
                 if(confirm("정말로 삭제하시겠습니까?")){
-                    // alert(commentId)
                     $.ajax({
                         type: "DELETE",
                         url: "/api/comments/" + commentId + "/modify",
@@ -276,12 +284,6 @@
             }
             
         }
-
-        // $(document).ready(function(){
-            
-            
-        // });
-        
     </script>
 </body>
 

@@ -117,14 +117,6 @@
                 $("#buttons_area").show();
             }
         });
-        window.onload = function() {
-            // alert(user.authorName);
-            // if(user === ''){ // 로그인 하지 않은 경우 글쓰기, 로그아웃 버튼 숨김
-            //     $("#signOutFunction").hide();
-            //     $("#signInFunction").show();
-            //     $("#buttons_area").empty();
-            // }
-        }
 
         // 최초 접근 시 모든 게시글을 불러온다.
         $(document).ready(function() {
@@ -142,9 +134,6 @@
             $.ajax({
                 type: "GET",
                 url: `/api/articles`,
-                // headers: {
-                //     authorization: `Bearer ${localStorage.getItem("token")}`,
-                // },
                 success: function (response) {
                     callback(response["articles"]);
                 },
@@ -152,7 +141,8 @@
         }
 
         function makeCard(item){
-            let createdDate = new Date(item["createdAt"]).toLocaleDateString('ko-KR'); // 한국식 연월일 날짜로 변경
+            // item.createdAt -> item["createdAt"] 로 불러와도 가능함.
+            let createdDate = new Date(item.createdAt).toLocaleDateString('ko-KR'); // 한국식 연월일 날짜로 변경
             let temp_html = `<div class="column is-one-third">
                 <div class="card is-shady" style="cursor: pointer;" onclick="location.href='/articles/${item["articleId"]}'">
                     <div class="card-content">
