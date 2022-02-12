@@ -36,13 +36,10 @@ const router = express.Router();
 
 // 전체 게시글 불러오기. index.ejs > getArticles()
 router.get('/articles', async (req, res) => {
-    console.log(req.body);
+    // [{ article의 내용. _id: ..., title: ..., content: ... }, { }, { }]
     const articles = await Article.find().sort({ createdAt: 'desc' }).exec();
-    // console.log(articles); // [{ article의 내용. _id: ..., title: ..., content: ... }, { }, { }]
-
+        // authorId만 추출. ['authorId1', 'authorId2', 'authorId3', ..]
     const authorIds = articles.map((author) => author.authorId); 
-    // console.log(authorIds); // authorId만 추출. ['authorId1', 'authorId2', 'authorId3', ..]
-    
     // $in : 비교 연산자. 주어진 배열(authorIds) 안에 속하는 값
     const authorInfoById = await User.find({
         _id: { $in: authorIds },
@@ -296,6 +293,7 @@ router.post('/users', async (req, res) => {
     } catch (err) {
         let validationErrorMessage = '요청한 데이터 형식이 올바르지 않습니다.';
         let validationJoiMessage = err.details[0].message;
+        console.log(err.details[0].message);
         // if (validationJoiMessage.includes('email')) { // 올바른 이메일 형식을 입력하지 않은 경우
         //     validationErrorMessage = '올바른 이메일 형식을 입력해주세요.';
         if (validationJoiMessage.includes('authorName')) {

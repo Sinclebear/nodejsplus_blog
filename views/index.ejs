@@ -143,6 +143,8 @@
         function makeCard(item){
             // item.createdAt -> item["createdAt"] 로 불러와도 가능함.
             let createdDate = new Date(item.createdAt).toLocaleDateString('ko-KR'); // 한국식 연월일 날짜로 변경
+            //alert(item.createdAt);
+            //alert(typeof(item.createdAt));
             let temp_html = `<div class="column is-one-third">
                 <div class="card is-shady" style="cursor: pointer;" onclick="location.href='/articles/${item["articleId"]}'">
                     <div class="card-content">
