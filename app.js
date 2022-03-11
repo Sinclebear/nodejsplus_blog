@@ -8,10 +8,18 @@ const authMiddleware = require('./middlewares/auth-middleware');
 const Joi = require('joi');
 const port = 8080;
 
+const logger = require('./config/winston');
+const morgan = require('morgan');
+const combined =
+    ':remote-addr - :remote-user ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"';
+// 기존 combined 포멧에서 timestamp만 제거
+const morganFormat = process.env.NODE_ENV !== 'production' ? 'dev' : combined; // NOTE: morgan 출력 형태 server.env에서 NODE_ENV 설정 production : 배포 dev : 개발
+console.log(morganFormat);
+
 // 로컬에서 테스트 중인 경우
-mongoose.connect("mongodb://localhost/nodejsplus_blogdb", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+mongoose.connect('mongodb://localhost/nodejsplus_blogdb', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
 });
 
 // Ubuntu EC2에서 테스트 중인 경우
@@ -34,12 +42,33 @@ db.on('error', console.error.bind(console, 'connection error:'));
 const app = express();
 const router = express.Router();
 
+app.get('/test/info', (req, res, next) => {
+    logger.info('info test');
+    res.status(200).send({
+        message: 'info test!',
+    });
+});
+
+app.get('/test/warn', (req, res, next) => {
+    logger.warn('warning test');
+    res.status(400).send({
+        message: 'warning test!',
+    });
+});
+
+app.get('/test/error', (req, res, next) => {
+    logger.error('error test');
+    res.status(500).send({
+        message: 'error test!',
+    });
+});
+
 // 전체 게시글 불러오기. index.ejs > getArticles()
 router.get('/articles', async (req, res) => {
     // [{ article의 내용. _id: ..., title: ..., content: ... }, { }, { }]
     const articles = await Article.find().sort({ createdAt: 'desc' }).exec();
-        // authorId만 추출. ['authorId1', 'authorId2', 'authorId3', ..]
-    const authorIds = articles.map((author) => author.authorId); 
+    // authorId만 추출. ['authorId1', 'authorId2', 'authorId3', ..]
+    const authorIds = articles.map((author) => author.authorId);
     // $in : 비교 연산자. 주어진 배열(authorIds) 안에 속하는 값
     const authorInfoById = await User.find({
         _id: { $in: authorIds },
@@ -371,9 +400,11 @@ router.get('/users/me', authMiddleware, async (req, res) => {
     // console.log(typeof(res.locals));
     /**
      * res.locals 내용 예시
-     * [Object: null prototpye] { user: { _id: new ObjectId("61f39afc469383be12e78e81"), email: 'test@test.com', nickname: 'mynickname', password: '1234', __v: 0 }}
+     * [Object: null prototpye] { user: { _id: new ObjectId("61f..78"), authorName: 'shjin', password: 'mypassword', createdAt: 2022-02-01T10:28:53.882Z, ...  __v: 0 }}
      */
     const { user } = res.locals; // user object
+    console.log(res.locals);
+    console.log(user);
     res.send({
         user: {
             authorId: user.authorId,

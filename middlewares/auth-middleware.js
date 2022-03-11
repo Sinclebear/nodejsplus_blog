@@ -23,12 +23,16 @@ module.exports = (req, res, next) => {
          * user 내용 예시
          * { user: { _id: new ObjectId("61f39afc469383be12e78e81"), email: 'test@test.com', nickname: 'mynickname', password: '1234', __v: 0 }}
         */
-        User.findById(authorId)
-            .exec()
-            .then((user) => {
-                res.locals.user = user; // res.locals 를 사용하면 이 미들웨어를 거쳐가는 다른 곳에서도 다 공통적으로 사용할 수 있음.
-                next();
-            });
+        User.findOne({"_id": authorId }).exec().then((user) => {
+            res.locals.user = user;
+            next()
+        });
+        // User.findById(authorId)
+        //     .exec()
+        //     .then((user) => {
+        //         res.locals.user = user; // res.locals 를 사용하면 이 미들웨어를 거쳐가는 다른 곳에서도 다 공통적으로 사용할 수 있음.
+        //         next();
+        //     });
     } catch (error) {
         // 토큰이 없거나, 유효하지 않은 토큰인 경우 이쪽으로 접근.
         res.status(401).send({
