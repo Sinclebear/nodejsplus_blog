@@ -8,13 +8,14 @@ const authMiddleware = require('./middlewares/auth-middleware');
 const Joi = require('joi');
 const port = 8080;
 
-const logger = require('./config/winston');
-const morgan = require('morgan');
-const combined =
-    ':remote-addr - :remote-user ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"';
-// 기존 combined 포멧에서 timestamp만 제거
-const morganFormat = process.env.NODE_ENV !== 'production' ? 'dev' : combined; // NOTE: morgan 출력 형태 server.env에서 NODE_ENV 설정 production : 배포 dev : 개발
-console.log(morganFormat);
+// const logger = require('./config/winston');
+// const morgan = require('morgan');
+// const dev = ':method :url :status :response-time ms - :res[content-length]';
+// const combined =
+//     ':remote-addr - :remote-user ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"';
+// // 기존 combined 포멧에서 timestamp만 제거
+// const morganFormat = process.env.NODE_ENV !== 'production' ? dev : combined; // NOTE: morgan 출력 형태 server.env에서 NODE_ENV 설정 production : 배포 dev : 개발
+// console.log(morganFormat);
 
 // 로컬에서 테스트 중인 경우
 mongoose.connect('mongodb://localhost/nodejsplus_blogdb', {
@@ -42,8 +43,13 @@ db.on('error', console.error.bind(console, 'connection error:'));
 const app = express();
 const router = express.Router();
 
+global.logger || (global.logger = require('./config/winston')); // → 전역에서 사용
+const morganMiddleware = require('./middlewares/morgan-middleware');
+app.use(morganMiddleware); // 콘솔창에 통신결과 나오게 해주는 것
+
+//app.use(morgan(morganFormat));
 app.get('/test/info', (req, res, next) => {
-    logger.info('info test');
+    logger.info('/test/info 진입');
     res.status(200).send({
         message: 'info test!',
     });
@@ -403,8 +409,8 @@ router.get('/users/me', authMiddleware, async (req, res) => {
      * [Object: null prototpye] { user: { _id: new ObjectId("61f..78"), authorName: 'shjin', password: 'mypassword', createdAt: 2022-02-01T10:28:53.882Z, ...  __v: 0 }}
      */
     const { user } = res.locals; // user object
-    console.log(res.locals);
-    console.log(user);
+    // console.log(res.locals);
+    // console.log(user);
     res.send({
         user: {
             authorId: user.authorId,
@@ -484,12 +490,12 @@ app.get('/articles/:articleId/modify', async (req, res) => {
     res.status(200).render('read');
 });
 
-const requestMiddleware = (req, res, next) => {
-    console.log('Request URL: ', req.originalUrl, ' - ', new Date());
-    next(); // 하단의 라우터로 이동
-};
+// const requestMiddleware = (req, res, next) => {
+//     console.log('Request URL: ', req.originalUrl, ' - ', new Date());
+//     next(); // 하단의 라우터로 이동
+// };
 
-app.use(requestMiddleware);
+// app.use(requestMiddleware);
 
 app.use('/api', express.urlencoded({ extended: false }), router);
 // app.use(express.static("assets"));
