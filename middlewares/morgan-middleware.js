@@ -12,9 +12,12 @@ const stream = {
     },
 };
 
-const skip = () => {
-    const env = process.env.NODE_ENV || 'development';
-    return env !== 'development';
+const skip = (req, res) => {
+    // const env = process.env.NODE_ENV || 'development';
+    // return env !== 'development';
+    {
+        return res.statusCode < 400;
+    }
 };
 
 // https://jeonghwan-kim.github.io/morgan-helper/
@@ -36,23 +39,22 @@ morgan.token('status', function (req, res) {
 
 // https://jeonghwan-kim.github.io/morgan-helper/
 morgan.token('request', function (req, res) {
-    return 'Request_' + JSON.stringify(req.body);
+    return 'Request : ' + JSON.stringify(req.body);
 });
-morgan.token('makeLine', function () {
-    let line =
-        "-----------------------------------------------*(੭*ˊᵕˋ)੭* 응답 결과 ╰(*'v'*)╯-----------------------------------------------";
-    let blank = '                                   ';
-    return line + '\n' + blank;
-});
+// morgan.token('makeLine', function () {
+//     let line =
+//         "-----------------------------------------------*(੭*ˊᵕˋ)੭* 응답 결과 ╰(*'v'*)╯-----------------------------------------------";
+//     let blank = '                                   ';
+//     return line + '\n' + blank;
+// });
 
 // Build the morgan middleware
 // morgan 함수의 인자(format)로는 short, dev, common, combined 가 올 수 있다. (정보의 노출 수준)
 // 보통 배포시에는 combined 혹은 common 에 필요한 정보들을 추가하여 사용하는 것을 추천 || 추후 배포 시 사용 -> 주소,IP_ :remote-addr :remote-user |
 const morganMiddleware = morgan(
-    ":makeLine 요청_:method | url_':url' | :request | Status_:status | 응답시간_:response-time ms (:res[content-length]줄)",
+    // ":makeLine 요청_:method | url_':url' | :request | Status_:status | 응답시간_:response-time ms (:res[content-length]줄)",
+    '[:method][:status] | :url | [:request] | [응답시간 - :response-time ms]',
     { stream, skip }
 );
-
-
 
 module.exports = morganMiddleware;

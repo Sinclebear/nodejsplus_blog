@@ -9,15 +9,6 @@ const authMiddleware = require('./middlewares/auth-middleware');
 const Joi = require('joi');
 const port = 8080;
 
-// const logger = require('./config/winston');
-// const morgan = require('morgan');
-// const dev = ':method :url :status :response-time ms - :res[content-length]';
-// const combined =
-//     ':remote-addr - :remote-user ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"';
-// // 기존 combined 포멧에서 timestamp만 제거
-// const morganFormat = process.env.NODE_ENV !== 'production' ? dev : combined; // NOTE: morgan 출력 형태 server.env에서 NODE_ENV 설정 production : 배포 dev : 개발
-// console.log(morganFormat);
-
 // 로컬에서 테스트 중인 경우
 mongoose.connect('mongodb://localhost/nodejsplus_blogdb', {
     useNewUrlParser: true,
