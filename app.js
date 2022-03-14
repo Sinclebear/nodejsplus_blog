@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
@@ -45,7 +46,10 @@ const router = express.Router();
 
 global.logger || (global.logger = require('./config/winston')); // → 전역에서 사용
 const morganMiddleware = require('./middlewares/morgan-middleware');
+const logger = require('./config/winston');
 app.use(morganMiddleware); // 콘솔창에 통신결과 나오게 해주는 것
+
+// logger.warn('Some warning!!');
 
 //app.use(morgan(morganFormat));
 app.get('/test/info', (req, res, next) => {
@@ -57,6 +61,7 @@ app.get('/test/info', (req, res, next) => {
 
 app.get('/test/warn', (req, res, next) => {
     logger.warn('warning test');
+    // logger add 하면 오류.  config/winston.js 내의
     res.status(400).send({
         message: 'warning test!',
     });

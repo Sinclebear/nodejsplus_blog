@@ -1,6 +1,7 @@
 const winston = require('winston');
 require('winston-daily-rotate-file');
 const logDir = '../logs';
+const TelegramLogger = require('winston-telegram');
 
 const levels = {
     error: 0,
@@ -60,5 +61,23 @@ const logger = winston.createLogger({
         }),
     ],
 });
+
+winston.add(
+    new TelegramLogger({
+        token: process.env.TELEGRAM_BOT_TOKEN,
+        chatId: process.env.TELEGRAM_MY_CHATID,
+        level: 'warn',
+        // unique: true,
+        formatMessage: function (options) {
+            let message = options.message;
+            if (options.level === 'warn') {
+                message = '[Warning] ' + message;
+            }
+            return message;
+        },
+    })
+);
+
+winston.warn('Some warning!!');
 
 module.exports = logger;
