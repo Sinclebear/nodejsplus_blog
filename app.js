@@ -52,6 +52,7 @@ app.get('/test/info', (req, res, next) => {
 
 app.get('/test/warn', (req, res, next) => {
     logger.warn('warning test');
+    // logger.log('warn', 'warning test');
     // logger add 하면 오류.  config/winston.js 내의
     res.status(400).send({
         message: 'warning test!',
@@ -60,11 +61,12 @@ app.get('/test/warn', (req, res, next) => {
 
 app.get('/test/error', (req, res, next) => {
     logger.error('error test');
+    // logger.log('error', 'error test');
     res.status(500).send({
         message: 'error test!',
     });
 });
-
+/******************************************************************* */
 // 전체 게시글 불러오기. index.ejs > getArticles()
 router.get('/articles', async (req, res) => {
     // [{ article의 내용. _id: ..., title: ..., content: ... }, { }, { }]
