@@ -14,7 +14,7 @@
 - 댓글 작성, 수정, 삭제 기능
 
 ## 프로젝트 시연 영상
-
+[![Video Label](http://img.youtube.com/vi/rAa8AnMHYYY/0.jpg)](https://youtu.be/rAa8AnMHYYY?t=0s)
 ## 사용된 기술
 ```
 express 4.17.2
