@@ -15,6 +15,8 @@
 
 ## 프로젝트 시연 영상
 [![Video Label](http://img.youtube.com/vi/rAa8AnMHYYY/0.jpg)](https://youtu.be/rAa8AnMHYYY?t=0s)
+- 사진을 클릭하여 영상 재생 (Youtube 링크로 이동됩니다)
+
 ## 사용된 기술
 ```
 express 4.17.2
